@@ -1,39 +1,260 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-    <title>食堂菜谱 · 手机检索</title>
+    <title>食堂菜谱 · 档口检索</title>
     <style>
-        /* ... (样式部分保持不变，与您之前提供的完全一致) ... */
+        * {
+            box-sizing: border-box;
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+        }
+        body {
+            background: #f4f6f9;
+            margin: 0;
+            padding: 16px;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+        }
+        .container {
+            max-width: 600px;
+            width: 100%;
+            background: white;
+            border-radius: 28px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.08);
+            padding: 24px 20px;
+        }
+        h1 {
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin: 0 0 4px 0;
+            color: #1e293b;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        h1 small {
+            font-size: 0.7rem;
+            font-weight: 400;
+            background: #e9eef3;
+            color: #3c4b5f;
+            padding: 4px 12px;
+            border-radius: 40px;
+            letter-spacing: 0.3px;
+            white-space: nowrap;
+        }
+        .sub {
+            color: #4b5b6c;
+            margin-bottom: 20px;
+            border-left: 4px solid #f97316;
+            padding-left: 14px;
+            background: #fff7ed;
+            border-radius: 0 14px 14px 0;
+            line-height: 1.5;
+            font-size: 0.9rem;
+        }
+        .search-panel {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-bottom: 24px;
+            background: #f8fafc;
+            padding: 10px 16px;
+            border-radius: 60px;
+            border: 1px solid #dee4ec;
+        }
+        .search-icon {
+            font-size: 1.3rem;
+            color: #f97316;
+        }
+        .search-box {
+            flex: 1 1 180px;
+            border: none;
+            background: transparent;
+            font-size: 1rem;
+            padding: 10px 0;
+            outline: none;
+            color: #0f1a2e;
+            font-weight: 500;
+            min-width: 140px;
+        }
+        .search-box::placeholder {
+            color: #9aa9b9;
+            font-weight: 400;
+            font-size: 0.95rem;
+        }
+        .clear-btn {
+            background: none;
+            border: none;
+            color: #7c8ba0;
+            font-size: 1rem;
+            cursor: pointer;
+            padding: 6px 12px;
+            border-radius: 40px;
+            transition: background 0.2s;
+            white-space: nowrap;
+        }
+        .clear-btn:hover {
+            background: #e2e8f0;
+            color: #1e293b;
+        }
+        .stats {
+            background: #ffffff;
+            border-radius: 30px;
+            padding: 6px 16px;
+            font-weight: 500;
+            color: #2c3e50;
+            border: 1px solid #dce3ec;
+            font-size: 0.9rem;
+            white-space: nowrap;
+        }
+        .stats strong {
+            color: #f97316;
+            font-size: 1.1rem;
+            margin-right: 2px;
+        }
+        .table-wrapper {
+            overflow-x: auto;
+            border-radius: 20px;
+            border: 1px solid #e9edf2;
+            background: white;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 500px;  /* 确保在小屏上可横向滑动 */
+            font-size: 0.85rem;
+        }
+        th {
+            background: #f8fafc;
+            color: #2e405b;
+            font-weight: 600;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            padding: 14px 8px;
+            border-bottom: 2px solid #dce3ec;
+            text-align: left;
+            white-space: nowrap;
+        }
+        td {
+            padding: 12px 8px;
+            border-bottom: 1px solid #eef2f6;
+            color: #1f2a3f;
+            vertical-align: middle;
+        }
+        tr:last-child td {
+            border-bottom: none;
+        }
+        tr:hover td {
+            background-color: #fff9f2;
+        }
+        .stall-badge {
+            background: #e6edf6;
+            padding: 4px 10px;
+            border-radius: 50px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: #23457a;
+            display: inline-block;
+            white-space: nowrap;
+            max-width: 140px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .price {
+            font-weight: 700;
+            color: #c2410c;
+            background: #ffefe7;
+            padding: 4px 8px;
+            border-radius: 30px;
+            display: inline-block;
+            font-size: 0.8rem;
+            white-space: nowrap;
+        }
+        .weight {
+            color: #4f6f8f;
+            font-size: 0.8rem;
+            white-space: nowrap;
+        }
+        .unit {
+            color: #6f7c91;
+            font-size: 0.75rem;
+            margin-left: 2px;
+            white-space: nowrap;
+        }
+        .empty-row td {
+            padding: 40px;
+            text-align: center;
+            color: #7f8fa4;
+            font-size: 1rem;
+        }
+        .footer-note {
+            margin-top: 20px;
+            font-size: 0.8rem;
+            color: #5c6f87;
+            background: #f0f4fa;
+            padding: 14px 18px;
+            border-radius: 40px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .dot {
+            width: 8px;
+            height: 8px;
+            background: #f97316;
+            border-radius: 20px;
+            display: inline-block;
+        }
     </style>
 </head>
 <body>
 <div class="container">
-    <h1>🍚 食堂菜谱 <small>扫码即用</small></h1>
-    <div class="search-panel">
-        <span style="color:#f97316;">🔍</span>
-        <input class="search-box" id="searchInput" placeholder="例如 土豆 牛肉 鸡蛋" autofocus>
-        <button class="clear-btn" id="clearBtn">✖</button>
-        <span class="stats" id="resultCount">加载中…</span>
+    <h1>
+        🍚 档口菜谱检索器
+        <small>八号·七号·六号·五号·四号·三号·二号·一号·套餐</small>
+    </h1>
+    <div class="sub">
+        🔍 输入原料名称（例如 “土豆”、“鸡蛋”、“鸡肉”、“豆腐” ）快速查看哪些档口在制作，以及规格和补贴价。
     </div>
-    <div style="overflow-x:auto;">
-        <table>
-            <thead><tr><th>品名</th><th>档口</th><th>补贴价</th><th>熟重</th><th>单位</th></tr></thead>
-            <tbody id="tableBody"><tr><td colspan="5" class="loading">⏳ 正在读取菜单数据…</td></tr></tbody>
+
+    <div class="search-panel">
+        <span class="search-icon">🔎</span>
+        <input class="search-box" type="text" id="searchInput" placeholder="例：土豆 或 牛肉 或 茄子 ..." autofocus>
+        <button class="clear-btn" id="clearBtn">✖ 清空</button>
+        <span class="stats" id="resultCount">加载菜谱…</span>
+    </div>
+
+    <div class="table-wrapper">
+        <table id="resultTable">
+            <thead>
+                <tr>
+                    <th>品名</th>
+                    <th>所属档口</th>
+                    <th>补贴价 (元)</th>
+                    <th>熟重/规格</th>
+                    <th>单位</th>
+                </tr>
+            </thead>
+            <tbody id="tableBody">
+                <tr><td colspan="5" style="text-align:center; padding:30px;">⏳ 正在读取菜单数据…</td></tr>
+            </tbody>
         </table>
     </div>
+
     <div class="footer-note">
-        ⭐ 数据来自本地文件，管理员修改 menu.csv 并上传后页面自动更新。
+        <span class="dot"></span> 价格依据“师生补贴价”展示。数据来自本地 menu.csv，管理员修改文件后页面自动更新。
     </div>
 </div>
 
 <script>
 (function() {
-    // =======================================================
-    // 修改点：数据源改为同目录下的 menu.csv 文件
-    // =======================================================
-    const CSV_FILE_URL = 'menu.csv';  // 指向您刚上传的文件
+    const CSV_FILE_URL = 'menu.csv';  // 与 index.html 同一目录
 
     const tbody = document.getElementById('tableBody');
     const searchInput = document.getElementById('searchInput');
@@ -46,21 +267,17 @@
         fetch(CSV_FILE_URL)
             .then(response => {
                 if (!response.ok) {
-                    throw new Error(`无法加载文件 (HTTP ${response.status})`);
+                    throw new Error(`HTTP ${response.status} - 文件不存在`);
                 }
                 return response.text();
             })
             .then(csvText => {
-                // 简单解析 CSV（按行分割，按逗号分割，并去除可能的引号）
                 const lines = csvText.trim().split(/\r?\n/);
                 if (lines.length < 2) {
                     dishes = [];
                 } else {
-                    // 跳过第一行表头
                     dishes = lines.slice(1).map(line => {
-                        // 处理简单 CSV：按逗号分割，并移除单元格首尾可能存在的引号
                         const cells = line.split(',').map(cell => cell.trim().replace(/^"(.*)"$/, '$1'));
-                        // 确保至少有5列
                         return [
                             cells[0] || '',
                             cells[1] || '',
@@ -73,8 +290,9 @@
                 renderDishes('');
             })
             .catch(err => {
-                console.error('加载失败:', err);
-                tbody.innerHTML = `<tr><td colspan="5" style="color:red; text-align:center;">❌ 加载失败，请检查文件 menu.csv 是否存在</td></tr>`;
+                console.error(err);
+                tbody.innerHTML = '<tr><td colspan="5" style="color:red; text-align:center; padding:30px;">❌ 加载失败，请检查文件 menu.csv 是否存在</td></tr>';
+                resultSpan.innerHTML = '加载失败';
             });
     }
 
@@ -93,9 +311,9 @@
             const [name, stall, price, weight, unit] = d;
             html += `<tr>
                 <td><strong>${name}</strong></td>
-                <td><span class="stall-badge">${stall}</span></td>
+                <td><span class="stall-badge" title="${stall}">${stall}</span></td>
                 <td><span class="price">¥${price.toFixed(2)}</span></td>
-                <td class="weight">${weight}</td>
+                <td><span class="weight">${weight}</span></td>
                 <td><span class="unit">${unit}</span></td>
             </tr>`;
         });
