@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-    <title>食堂菜谱 · 档口检索</title>
+    <title>201食堂 · 档口检索</title>
     <style>
         * {
             box-sizing: border-box;
@@ -125,7 +125,7 @@
         table {
             width: 100%;
             border-collapse: collapse;
-            min-width: 500px;  /* 确保在小屏上可横向滑动 */
+            min-width: 500px;
             font-size: 0.85rem;
         }
         th {
@@ -216,16 +216,16 @@
 <body>
 <div class="container">
     <h1>
-        🍚 档口菜谱检索器
-        <small>八号·七号·六号·五号·四号·三号·二号·一号·套餐</small>
+        🍚 201食堂菜谱检索器
+        <small>一号·二号·三号·四号·五号·六号·七号·八号</small>
     </h1>
     <div class="sub">
-        🔍 输入原料名称（例如 “土豆”、“鸡蛋”、“鸡肉”、“豆腐” ）快速查看哪些档口在制作，以及规格和补贴价。
+        🔍 输入原料名称（例如 “土豆”、“鸡蛋” ）快速查看哪些档口在制作，以及规格和补贴价。
     </div>
 
     <div class="search-panel">
         <span class="search-icon">🔎</span>
-        <input class="search-box" type="text" id="searchInput" placeholder="例：土豆 或 牛肉 或 茄子 ..." autofocus>
+        <input class="search-box" type="text" id="searchInput" placeholder="例：土豆 或 牛肉 或 鸡蛋 ..." autofocus>
         <button class="clear-btn" id="clearBtn">✖ 清空</button>
         <span class="stats" id="resultCount">加载菜谱…</span>
     </div>
@@ -298,7 +298,22 @@
 
     function renderDishes(filterText) {
         const term = filterText.trim().toLowerCase();
-        const filtered = term === '' ? dishes : dishes.filter(d => d[0].toLowerCase().includes(term));
+        let filtered;
+        if (term === '') {
+            filtered = dishes;
+        } else {
+            filtered = dishes.filter(d => {
+                // 品名
+                const nameMatch = d[0].toLowerCase().includes(term);
+                // 档口
+                const stallMatch = d[1].toLowerCase().includes(term);
+                // 补贴价（转为两位小数字符串）
+                const priceStr = d[2].toFixed(2);
+                const priceMatch = priceStr.includes(term);
+                // 返回任意匹配
+                return nameMatch || stallMatch || priceMatch;
+            });
+        }
         resultSpan.innerHTML = `共 <strong>${filtered.length}</strong> 项`;
 
         if (filtered.length === 0) {
